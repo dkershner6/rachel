@@ -1,6 +1,6 @@
 {
   "name": "rachels-staples",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
@@ -23,7 +23,9 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mdx-js/react": "^1.6.22",
+    "@mui/icons-material": "^5.11.9",
     "@mui/material": "^5.10.17",
+    "@mui/x-data-grid": "^5.17.23",
     "clsx": "^1.2.1",
     "prism-react-renderer": "^1.3.5",
     "react": "^17.0.2",

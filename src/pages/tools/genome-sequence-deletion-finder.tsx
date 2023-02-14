@@ -1,5 +1,7 @@
 import React, { ReactElement } from "react";
 
+import CheckIcon from "@mui/icons-material/Check";
+import UploadIcon from "@mui/icons-material/UploadFile";
 import {
     Box,
     Button,
@@ -8,11 +10,20 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Layout from "@theme/Layout";
 import { useForm } from "react-hook-form";
+
+interface DeletionResult {
+    startingId: string;
+    endingId: string;
+    lengthOfDeletion: number;
+}
+
 const GenomeSequenceDeletionFinder = (): ReactElement => {
-    const [results, setResults] = React.useState(new Array<string>());
-    const { handleSubmit, register } = useForm<{
+    const [results, setResults] = React.useState(new Array<DeletionResult>());
+
+    const { handleSubmit, register, watch } = useForm<{
         idColumn: number;
         dataColumn: number;
         numberOfDeletions: number;
@@ -27,12 +38,14 @@ const GenomeSequenceDeletionFinder = (): ReactElement => {
         },
     });
 
+    const file = watch("file");
+
     // eslint-disable-next-line sonarjs/cognitive-complexity
     const onSubmit = handleSubmit(async (data) => {
         const { numberOfDeletions, minimumSurrounderValue } = data;
         const genomeData = await data.file[0].text();
 
-        const resultsAccumulator = new Array<string>();
+        const resultsAccumulator = new Array<DeletionResult>();
         let startSurrounder = null;
         const zeroes = new Set<string>();
 
@@ -46,7 +59,11 @@ const GenomeSequenceDeletionFinder = (): ReactElement => {
 
             if (dataValue !== 0 && dataValue >= minimumSurrounderValue) {
                 if (zeroes.size >= numberOfDeletions) {
-                    resultsAccumulator.push(id);
+                    resultsAccumulator.push({
+                        startingId: startSurrounder,
+                        endingId: id,
+                        lengthOfDeletion: zeroes.size,
+                    });
                     startSurrounder = id;
                     zeroes.clear();
                     continue;
@@ -129,40 +146,62 @@ const GenomeSequenceDeletionFinder = (): ReactElement => {
                         </Grid>
                         <Grid item xs={12}>
                             <Box marginRight={2}>
-                                <label htmlFor="file-input">
-                                    Data to Process
-                                </label>
-                                <Typography
-                                    variant="body2"
-                                    color="textSecondary"
+                                <Button
+                                    variant="outlined"
+                                    component="label"
+                                    htmlFor="file-input"
+                                    startIcon={
+                                        file ? <CheckIcon /> : <UploadIcon />
+                                    }
                                 >
-                                    File must be tab delimited
-                                </Typography>
+                                    Upload Tab-Delimited Data
+                                    <input
+                                        id="file-input"
+                                        type="file"
+                                        hidden
+                                        {...register("file")}
+                                        accept=".csv,.txt,.tsv"
+                                    />
+                                </Button>
                             </Box>
-                            <Box>
-                                <input
-                                    id="file-input"
-                                    type="file"
-                                    {...register("file")}
-                                    accept=".csv,.txt,.tsv"
-                                />
-                            </Box>
+                            <Box></Box>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} marginTop={3}>
-                        <Button size="large" type="submit" variant="contained">
+                        <Button
+                            size="large"
+                            type="submit"
+                            variant="contained"
+                            disabled={!file}
+                        >
                             Process
                         </Button>
                     </Grid>
                 </form>
-                <Box marginY={5}>
-                    <Typography component="h2" variant="h4" gutterBottom>
-                        Results
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                        {results.length} results found
-                    </Typography>
-                    <p>{results.join(", ")}</p>
+                <Box marginY={5} height={400} width="100%">
+                    <DataGrid
+                        rows={results}
+                        columns={[
+                            {
+                                field: "startingId",
+                                headerName: "Starting Id",
+                                width: 200,
+                            },
+                            {
+                                field: "endingId",
+                                headerName: "Ending Id",
+                                width: 200,
+                            },
+                            {
+                                field: "lengthOfDeletion",
+                                headerName: "Length of Deletion",
+                                width: 200,
+                            },
+                        ]}
+                        getRowId={(row) => row.startingId}
+                        rowsPerPageOptions={[100]}
+                        components={{ Toolbar: GridToolbar }}
+                    />
                 </Box>
             </Container>
         </Layout>
