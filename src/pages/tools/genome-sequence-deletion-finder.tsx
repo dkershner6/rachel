@@ -49,7 +49,6 @@ const GenomeSequenceDeletionFinder = (): ReactElement => {
                     resultsAccumulator.push(id);
                     startSurrounder = id;
                     zeroes.clear();
-                    console.log("START", resultsAccumulator);
                     continue;
                 }
 
@@ -58,8 +57,6 @@ const GenomeSequenceDeletionFinder = (): ReactElement => {
             }
 
             if (dataValue !== 0 && dataValue < minimumSurrounderValue) {
-                if (zeroes.size >= numberOfDeletions)
-                    console.log("CLEAR DUE TO LOW SURROUNDER", dataValue);
                 startSurrounder = null;
                 zeroes.clear();
 
@@ -68,8 +65,6 @@ const GenomeSequenceDeletionFinder = (): ReactElement => {
 
             if (dataValue === 0 && startSurrounder) {
                 zeroes.add(id);
-                if (zeroes.size >= numberOfDeletions)
-                    console.log("ZERO", zeroes.size);
             }
         }
 
@@ -149,6 +144,7 @@ const GenomeSequenceDeletionFinder = (): ReactElement => {
                                     id="file-input"
                                     type="file"
                                     {...register("file")}
+                                    accept=".csv,.txt,.tsv"
                                 />
                             </Box>
                         </Grid>
