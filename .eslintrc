@@ -1,0 +1,72 @@
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint",
+        "react",
+        "react-hooks",
+        "prettier",
+        "jest",
+        "jsx-a11y",
+        "sonarjs",
+        "import"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:jsx-a11y/recommended",
+        "plugin:jest/recommended",
+        "plugin:sonarjs/recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+        "plugin:import/typescript",
+        "prettier"
+    ],
+    "env": {
+        "es6": true,
+        "browser": true,
+        "jest": true
+    },
+    "settings": {
+        "react": {
+            "pragma": "React",
+            "version": "detect"
+        }
+    },
+    "rules": {
+        "react/prop-types": 0, // Disabled to prefer use of Typescript<Props>,
+        "import/no-unresolved": 0, // Disabled to prefer TypeScript
+        "import/order": [
+            "error",
+            {
+                "groups": ["builtin", "external", "parent", "sibling", "index"],
+                "newlines-between": "always",
+                "pathGroups": [
+                    {
+                        "pattern": "react",
+                        "group": "external",
+                        "position": "before"
+                    }
+                ],
+                "pathGroupsExcludedImportTypes": ["react"],
+                "alphabetize": {
+                    "order": "asc",
+                    "caseInsensitive": true
+                }
+            }
+        ]
+    },
+    "overrides": [
+        {
+            "files": ["*.js"],
+            "rules": {
+                "@typescript-eslint/no-var-requires": "off",
+                "@typescript-eslint/explicit-module-boundary-types": "off"
+            }
+        }
+    ]
+}
