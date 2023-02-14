@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkrachels_staples=self.webpackChunkrachels_staples||[]).push([[775],{5745:s=>{s.exports=JSON.parse('{"name":"docusaurus-plugin-content-pages","id":"default"}')}}]);
