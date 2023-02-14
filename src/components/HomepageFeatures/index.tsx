@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/no-var-requires */
 import React from "react";
 
@@ -14,7 +15,6 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
     {
         title: "Hey Rachel",
-
         Svg: require("@site/static/img/undraw_docusaurus_mountain.svg").default,
         description: (
             <>

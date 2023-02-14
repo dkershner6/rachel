@@ -1,0 +1,52 @@
+name: Push to Main
+
+on:
+  push:
+    branches:
+      - "main"
+  workflow_dispatch:
+    
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@v2
+    - name: Extract version
+      id: extract_version
+      uses: Saionaro/extract-package-version@v1.0.6
+    - name: Tag commit with updated version
+      uses: tvdias/github-tagger@v0.0.2
+      continue-on-error: true
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        tag: "v${{ steps.extract_version.outputs.version }}"
+        
+  build-deploy:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Node 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.15.0
+          registry-url: https://npm.pkg.github.com
+          scope: "@obfns"
+      - name: Build Docusaurus
+        run: |
+          npm ci
+          npm run build
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.READ_GH_PACKAGES_TOKEN }}
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: build
